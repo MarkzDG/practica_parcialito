@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧮 Recetas de Cálculo Numérico - Guía de Implementación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .nav-menu {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgb(34, 33, 33);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2em;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .method-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .method-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 35px rgba(0,0,0,0.15);
+        }
+        
+        .method-title {
+            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .motivation-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .motivation-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .when-to-use {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .when-to-use h4 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .when-to-use ul {
+            margin-left: 20px;
+            color: #424242;
+        }
+        
+        .recipe-steps {
+            background: #fff3e0;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .recipe-steps h4 {
+            color: #e65100;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .code-block {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        
+        .tips-section {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 50px;
+        }
+        
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tip-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+        
+        .tip-card h4 {
+            color: #e17055;
+            margin-bottom: 10px;
+        }
+        
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 1.5em;
+        }
+        
+        .scroll-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        
+        strong {
+            color: #667eea;
+        }
+        
+        .step-number {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧮 Recetas de Cálculo Numérico</h1>
+            <p>Guía completa de implementación con motivaciones y ejemplos</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="#sistemas-lineales" class="nav-button">📊 Sistemas Lineales</a>
+            <a href="#ecuaciones-diferenciales" class="nav-button">📈 EDOs</a>
+            <a href="#analisis-matricial" class="nav-button">📏 Análisis Matricial</a>
+            <a href="#diferencias-finitas" class="nav-button">📐 Diferencias Finitas</a>
+            <a href="#convergencia" class="nav-button">📊 Convergencia</a>
+            <a href="#tips" class="nav-button">🎯 Tips</a>
+        </div>
+        
+        <div class="content">
+            <!-- SISTEMAS LINEALES -->
+            <section id="sistemas-lineales" class="section">
+                <h2 class="section-title">📊 SISTEMAS LINEALES ITERATIVOS</h2>
+                
+                <!-- Introducción Matricial -->
+                <div class="method-card" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-left-color: #5f27cd;">
+                    <h3 class="method-title">🎯 Enfoque Matricial para Métodos Iterativos</h3>
+                    
+                    <div class="motivation-box" style="background: white;">
+                        <h4>🔍 Base Teórica Común</h4>
+                        <p>Los métodos iterativos para resolver Ax = b se basan en descomponer la matriz A en tres partes:</p>
+                        <div class="code-block">
+A = L + D + U
+
+donde:
+• D = diagonal de A (matriz diagonal)
+• L = parte triangular inferior de A (sin diagonal)
+• U = parte triangular superior de A (sin diagonal)</div>
+                        <p>Esta descomposición permite reescribir Ax = b como una iteración de punto fijo, donde cada método usa una estrategia diferente para actualizar x.</p>
+                    </div>
+                    
+                    <div class="when-to-use" style="background: #e3f2fd; border-left-color: #1976d2;">
+                        <h4>📊 Implementación en NumPy</h4>
+                        <div class="code-block">
+# Descomposición de A
+D = np.diag(np.diag(A))          # Matriz diagonal
+L = np.tril(A, -1)               # Triangular inferior (k=-1 excluye diagonal)
+U = np.triu(A, 1)                # Triangular superior (k=1 excluye diagonal)
+
+# Verificación: A = L + D + U
+assert np.allclose(A, L + D + U)</div>
+                    </div>
+                </div>
+                
+                <!-- Jacobi con enfoque matricial -->
+                <div class="method-card">
+                    <h3 class="method-title">🔄 Método de Jacobi (Enfoque Matricial)</h3>
+                    
+                    <div class="motivation-box">
+                        <h4>🎯 Motivación</h4>
+                        <p>Jacobi reformula Ax = b como Dx = -(L + U)x + b, despejando x de la diagonal. En forma matricial, esto da lugar a una iteración con matriz de iteración M_J = -D⁻¹(L + U).</p>
+                        <p>La ventaja del enfoque matricial es que podés analizar la convergencia estudiando el radio espectral ρ(M_J). Si ρ(M_J) < 1, el método converge. Además, este enfoque es más eficiente computacionalmente para implementar.</p>
+                    </div>
+                    
+                    <div class="when-to-use">
+                        <h4>📐 Formulación Matricial</h4>
+                        <div class="code-block">
+Iteración de Jacobi: x^(k+1) = M_J · x^(k) + c_J
+
+donde:
+• M_J = -D⁻¹(L + U)     (matriz de iteración)
+• c_J = D⁻¹b            (vector constante)</div>
+                    </div>
+                    
+                    <div class="recipe-steps">
+                        <h4>📝 Receta paso a paso</h4>
+                        <p><span class="step-number">1</span><strong>Descomponer A y verificar diagonal:</strong></p>
+                        <div class="code-block">
+D = np.diag(np.diag(A))
+L = np.tril(A, -1)
+U = np.triu(A, 1)
+
+# Verificar que no hay ceros en la diagonal
+if np.any(np.diag(A) == 0):
+    raise ValueError("Diagonal con ceros - Jacobi no aplicable")</div>
+                        
+                        <p><span class="step-number">2</span><strong>Construir matriz de iteración:</strong></p>
+                        <div class="code-block">
+M_jacobi = -np.linalg.inv(D) @ (L + U)
+c_jacobi = np.linalg.inv(D) @ b</div>
+                        
+                        <p><span class="step-number">3</span><strong>Iterar hasta convergencia:</strong></p>
+                        <div class="code-block">
+x = x0.copy()
+for k in range(max_iter):
+    x_anterior = x.copy()
+    x = M_jacobi @ x + c_jacobi
+    
+    error = np.linalg.norm(x - x_anterior, np.inf)
+    if error < tolerancia:
+        return x, k+1</div>
+                        
+                        <p><strong>💡 Ventajas del enfoque matricial:</strong></p>
+                        <ul>
+                            <li>Una sola multiplicación matriz-vector por iteración</li>
+                            <li>Fácil análisis de convergencia via radio espectral</li>
+                            <li>Implementación más limpia y eficiente</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Gauss-Seidel con enfoque matricial -->
+                <div class="method-card">
+                    <h3 class="method-title">🔄 Método de Gauss-Seidel (Enfoque Matricial)</h3>
+                    
+                    <div class="motivation-box">
+                        <h4>🎯 Motivación</h4>
+                        <p>Gauss-Seidel mejora Jacobi usando los valores actualizados inmediatamente. Matricialmente, esto significa que agrupamos D + L del lado izquierdo: (D + L)x = -Ux + b.</p>
+                        <p>La matriz de iteración M_GS = -(D + L)⁻¹U generalmente tiene menor radio espectral que M_J, lo que explica por qué Gauss-Seidel típicamente converge más rápido. El precio es que no es paralelizable como Jacobi.</p>
+                    </div>
+                    
+                    <div class="when-to-use">
+                        <h4>📐 Formulación Matricial</h4>
+                        <div class="code-block">
+Iteración de Gauss-Seidel: x^(k+1) = M_GS · x^(k) + c_GS
+
+donde:
+• M_GS = -(D + L)⁻¹U     (matriz de iteración)
+• c_GS = (D + L)⁻¹b      (vector constante)</div>
+                    </div>
+                    
+                    <div class="recipe-steps">
+                        <h4>📝 Receta paso a paso</h4>
+                        <p><span class="step-number">1</span><strong>Descomponer A (igual que Jacobi):</strong></p>
+                        <div class="code-block">
+D = np.diag(np.diag(A))
+L = np.tril(A, -1)
+U = np.triu(A, 1)</div>
+                        
+                        <p><span class="step-number">2</span><strong>Construir matriz de iteración GS:</strong></p>
+                        <div class="code-block">
+M_gs = -np.linalg.inv(D + L) @ U
+c_gs = np.linalg.inv(D + L) @ b</div>
+                        
+                        <p><span class="step-number">3</span><strong>Iterar (idéntico a Jacobi en forma):</strong></p>
+                        <div class="code-block">
+x = x0.copy()
+for k in range(max_iter):
+    x_anterior = x.copy()
+    x = M_gs @ x + c_gs
+    
+    error = np.linalg.norm(x - x_anterior, np.inf)
+    if error < tolerancia:
+        return x, k+1</div>
+                        
+                        <p><strong>⚡ Comparación de convergencia:</strong></p>
+                        <ul>
+                            <li>Si A es diagonal dominante: ambos convergen, GS más rápido</li>
+                            <li>Radio espectral: ρ(M_GS) ≤ ρ(M_J) para matrices positivas definidas</li>
+                            <li>GS puede converger cuando Jacobi diverge (y viceversa)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Análisis de Convergencia -->
+                <div class="method-card" style="background: #fff3e0; border-left-color: #ff6f00;">
+                    <h3 class="method-title">📊 Análisis de Convergencia</h3>
+                    
+                    <div class="recipe-steps" style="background: transparent;">
+                        <h4>🔍 Criterios de Convergencia</h4>
+                        <p><strong>Condición necesaria y suficiente:</strong> ρ(M) < 1 (radio espectral)</p>
+                        <div class="code-block">
+# Calcular radio espectral
+autovalores = np.linalg.eigvals(M)
+radio_espectral = np.max(np.abs(autovalores))
+
+if radio_espectral >= 1:
+    print("⚠️ El método puede no converger")</div>
+                        
+                        <p><strong>Condiciones suficientes (garantizan convergencia):</strong></p>
+                        <ul>
+                            <li><strong>Diagonal dominante:</strong> |a_ii| > Σ|a_ij| para j≠i</li>
+                            <li><strong>Matriz simétrica y definida positiva:</strong> GS siempre converge</li>
+                        </ul>
+                        
+                        <p><strong>Estimación de velocidad de convergencia:</strong></p>
+                        <div class="code-block">
+# Número aproximado de iteraciones para reducir error por factor 10^(-p)
+n_iter ≈ p / (-log10(ρ))</div>
+                    </div>
+                </div>
+                
+                <!-- Eliminación Gaussiana -->
+                <div class="method-card">
+                    <h3 class="method-title">⬇️ Eliminación Gaussiana</h3>
+                    
+                    <div class="motivation-box">
+                        <h4>🎯 Motivación</h4>
+                        <p>Este es el método "clásico" que seguramente viste en álgebra lineal, pero ahora lo implementamos algorítmicamente. La idea es transformar el sistema Ax=b en uno equivalente pero triangular superior, que es trivial de resolver.</p>
+                        <p>Es como desarmar un problema complicado en uno cada vez más simple. Primero hacemos ceros debajo de la diagonal (eliminación hacia adelante), convirtiendo el sistema en triangular. Luego resolvemos de abajo hacia arriba (sustitución hacia atrás), empezando por la última ecuación que tiene una sola incógnita.</p>
+                    </div>
+                    
+                    <div class="when-to-use">
+                        <h4>📐 Cuándo usarlo</h4>
+                        <ul>
+                            <li>Sistemas pequeños/medianos donde necesitás la solución exacta</li>
+                            <li>Cuando no hay restricciones de memoria</li>
+                            <li>Base para otros algoritmos (LU, inversión de matrices)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="recipe-steps">
+                        <h4>📝 Receta paso a paso</h4>
+                        <p><span class="step-number">1</span><strong>Preparación:</strong></p>
+                        <ul>
+                            <li>Copiar A y b como float</li>
+                            <li>Verificar que no hay pivotes nulos</li>
+                        </ul>
+                        
+                        <p><span class="step-number">2</span><strong>Eliminación hacia adelante:</strong></p>
+                        <div class="code-block">
+Para cada pivote k (de 0 a n-2):
+    Para cada fila i debajo del pivote (k+1 a n-1):
+        - factor = A[i,k] / A[k,k]
+        - Fila i = Fila i - factor × Fila k
+        - b[i] = b[i] - factor × b[k]</div>
+                        
+                        <p><span class="step-number">3</span><strong>Sustitución hacia atrás:</strong></p>
+                        <div class="code-block">
+Para i desde n-1 hasta 0:
+    - x[i] = b[i]
+    - Restar contribuciones conocidas: x[i] -= Σ(A[i,j] × x[j])
+    - x[i] = x[i] / A[i,i]</div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ECUACIONES DIFERENCIALES -->
+            <section id="ecuaciones-diferenciales" class="section">
+                <h2 class="section-title">📈 ECUACIONES DIFERENCIALES</h2>
+                
+                <!-- Euler Simple -->
+                <div class="method-card">
+                    <h3 class="method-title">📊 Método de Euler Simple</h3>
+                    
+                    <div class="motivation-box">
+                        <h4>🎯 Motivación</h4>
+                        <p>Las ecuaciones diferenciales aparecen en todos lados: física, biología, economía, etc. Pero la mayoría no tienen solución analítica. Euler es el método más simple y intuitivo: si sabés dónde estás y hacia dónde vas (la derivada), podés dar un "pasito" en esa dirección.</p>
+                        <p>Es como caminar por una curva desconocida usando solo la información local de la tangente. Si los pasos son suficientemente pequeños, la aproximación será buena. Es el "hola mundo" de los métodos numéricos para EDOs.</p>
+                    </div>
+                    
+                    <div class="when-to-use">
+                        <h4>📐 Cuándo usarlo</h4>
+                        <ul>
+                            <li>EDOs simples donde no necesitás alta precisión</li>
+                            <li>Cuando querés entender el comportamiento cualitativo</li>
+                            <li>Como punto de partida antes de métodos más sofisticados</li>
+                            <li>Sistemas no-stiff (no rígidos)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="recipe-steps">
+                        <h4>📝 Receta paso a paso</h4>
+                        <p><span class="step-number">1</span><strong>Discretizar tiempo:</strong></p>
+                        <div class="code-block">
+t = np.arange(t0, tf + h, h)
+y = np.zeros(len(t))
+y[0] = y0</div>
+                        
+                        <p><span class="step-number">2</span><strong>Loop de integración:</strong></p>
+                        <div class="code-block">
+Para i desde 1 hasta len(t)-1:
+    y[i] = y[i-1] + h × f(t[i-1], y[i-1])</div>
+                        
+                        <p><span class="step-number">3</span><strong>Consideraciones:</strong></p>
+                        <ul>
+                            <li>h pequeño → mayor precisión pero más cálculos</li>
+                            <li>Verificar estabilidad del método</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Sistema de EDOs -->
+                <div class="method-card">
+                    <h3 class="method-title">🔄 Sistema de EDOs con Euler</h3>
+                    
+                    <div class="motivation-box">
+                        <h4>🎯 Motivación</h4>
+                        <p>En la vida real, rara vez tenés una sola variable que evoluciona. Pensá en un péndulo: tenés posición Y velocidad evolucionando juntas. O en ecología: poblaciones de predador y presa interactuando.</p>
+                        <p>Los sistemas de EDOs modelan estas situaciones donde múltiples variables evolucionan simultáneamente y se afectan mutuamente. La extensión vectorial de Euler maneja todas las variables como un vector, actualizándolas en conjunto. El "retrato de fase" (plot de una variable vs otra) revela patrones como ciclos, equilibrios, o caos que no son obvios mirando cada variable por separado.</p>
+                    </div>
+                    
+                    <div class="when-to-use">
+                        <h4>📐 Cuándo usarlo</h4>
+                        <ul>
+                            <li>Sistemas mecánicos (posición + velocidad)</li>
+                            <li>Modelos poblacionales acoplados</li>
+                            <li>Circuitos eléctricos con múltiples componentes</li>
+                            <li>Cualquier sistema donde las variables interactúan</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="recipe-steps">
+                        <h4>📝 Receta paso a paso</h4>
+                        <p><span class="step-number">1</span><strong>Preparar almacenamiento:</strong></p>
+                        <div class="code-block">
+Y = np.zeros((dim, len(t)))
+Y[:,0] = y0  # condición inicial vectorial</div>
+                        
+                        <p><span class="step-number">2</span><strong>Loop vectorial:</strong></p>
+                        <div class="code-block">
+Para i desde 1 hasta len(t)-1:
+    Y[:,i] = Y[:,i-1] + h × F(t[i-1], Y[:,i-1])</div>
+                        
+                        <p><span class="step-number">3</span><strong>Visualización:</strong></p>
+                        <ul>
+                            <li>Gráficos temporales: plot(t, Y[0,:]) y plot(t, Y[1,:])</li>
+                            <li>Retrato de fase: plot(Y[0,:], Y[1,:])</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Familia de Soluciones -->
+                <div class="method-card">
+                    <h3 class="method-title">📈 Familia de Soluciones EDO</h3>
+                    
+                    <div class="motivation-box">
+                        <h4>🎯 Motivación</h4>
+                        <p>Una misma ecuación diferencial puede tener comportamientos radicalmente diferentes según dónde empieces. Es como tirar una pelota desde diferentes alturas en un paisaje montañoso: algunas terminarán en un valle, otras en otro, y algunas podrían escapar al infinito.</p>
+                        <p>Estudiar una familia de soluciones con diferentes condiciones iniciales te permite entender el "flujo" global del sistema: hacia dónde convergen las soluciones, dónde están los equilibrios estables e inestables, y cómo se divide el espacio en "cuencas de atracción". Es fundamental para entender la dinámica completa del sistema.</p>
+                    </div>
+                    
+                    <div class="when-to-use">
+                        <h4>📐 Cuándo usarlo</h4>
+                        <ul>
+                            <li>Análisis de estabilidad de equilibrios</li>
+                            <li>Identificar comportamientos cualitativos</li>
+                            <li>Diseño de controladores</li>
+                            <li>Comprensión de bifurcaciones</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="recipe-steps">
+                        <h4>📝 Receta paso a paso</h4>
+                        <p><span class="step-number">1</span><strong>Definir EDO con puntos de equilibrio</strong></p>
+                        
+                        <p><span class="step-number">2</span><strong>Loop sobre condiciones iniciales:</strong></p>
+                        <div class="code-block">
+Para cada k en valores_iniciales:
+    - Resolver EDO con y(0) = k
+    - Graficar solución con etiqueta</div>
+                        
+                        <p><span class="step-number">3</span><strong>Análisis:</strong></p>
+                        <ul>
+                            <li>Identificar equilibrios (donde y' = 0)</li>
+                            <li>Observar convergencia/divergencia</li>
+                            <li>Añadir líneas de referencia</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ANÁLISIS MATRICIAL -->
+            <section id="analisis-matricial" class="section">
+                <h2 class="section-title">📏 ANÁLISIS MATRICIAL</h2>
+                
+                <!-- Estimación de Norma -->
+                <div class="method-card">
+                    <h3 class="method-title">📊 Estimación de Norma-2</h3>
+                    
+                    <div class="motivation-box">
+                        <h4>🎯 Motivación</h4>
+                        <p>La norma-2 de una matriz te dice cuánto puede "estirar" un vector en el peor caso. Es como preguntar: si esta matriz fuera una máquina de transformar vectores, ¿cuál es el máximo factor de amplificación posible? Esto es crucial para entender estabilidad numérica y condicionamiento.</p>
+                        <p>El método exacto requiere calcular valores propios (costoso para matrices grandes). Este método iterativo es brillante: prueba vectores aleatorios y mantiene registro del máximo estiramiento observado. Con suficientes intentos, te acercás arbitrariamente a la norma real. Es un ejemplo hermoso de algoritmo Monte Carlo.</p>
+                    </div>
+                    
+                    <div class="when-to-use">
+                        <h4>📐 Cuándo usarlo</h4>
+                        <ul>
+                            <li>Matrices grandes donde valores propios son costosos</li>
+                            <li>Cuando una estimación es suficiente</li>
+                            <li>Análisis de condicionamiento</li>
+                            <li>Verificar estabilidad de métodos iterativos</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="recipe-steps">
+                        <h4>📝 Receta paso a paso</h4>
+                        <p><span class="step-number">1</span><strong>Inicializar:</strong></p>
+                        <div class="code-block">
+s = np.zeros(n_iter)
+s[0] = 0</div>
+                        
+                        <p><span class="step-number">2</span><strong>Loop de estimación:</strong></p>
+                        <div class="code-block">
+Para k desde 1 hasta n_iter-1:
+    - Generar x aleatorio: x = randn(n)
+    - Normalizar: x = x / ||x||
+    - Calcular: s[k] = max(s[k-1], ||A×x||)</div>
+                        
+                        <p><span class="step-number">3</span><strong>Propiedades:</strong></p>
+                        <ul>
+                            <li>La sucesión s[k] es monótona creciente</li>
+                            <li>Converge a ||A||₂</li>
+                            <li>Comparar con np.linalg.norm(A, 2)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Matriz Inversa -->
+                <div class="method-card">
+                    <h3 class="method-title">🔄 Matriz Inversa (Gauss-Jordan)</h3>
+                    
+                    <div class="motivation-box">
+                        <h4>🎯 Motivación</h4>
+                        <p>Calcular la inversa de una matriz es como encontrar la operación "deshacer" para una transformación lineal. Si A transforma vectores de cierta manera, A⁻¹ los devuelve a su estado original.</p>
+                        <p>Gauss-Jordan es elegante: en lugar de resolver Ax=b para cada columna de la identidad por separado, resuelve todos los sistemas simultáneamente. Construís una matriz "aumentada" [A|I] y aplicás operaciones de fila hasta convertirla en [I|A⁻¹]. Es como preguntarle a la matriz A: "¿qué transformación, aplicada a vos, te convierte en la identidad?" Esa transformación es precisamente A⁻¹.</p>
+                    </div>
+                    
+                    <div class="when-to-use">
+                        <h4>📐 Cuándo usarlo</h4>
+                        <ul>
+                            <li>Resolver múltiples sistemas con la misma matriz</li>
+                            <li>Análisis teórico/educativo</li>
+                            <li>Matrices pequeñas donde necesitás la inversa explícita</li>
+                            <li>NUNCA para resolver un solo sistema (usar eliminación directa)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="recipe-steps">
+                        <h4>📝 Receta paso a paso</h4>
+                        <p><span class="step-number">1</span><strong>Verificar invertibilidad:</strong></p>
+                        <div class="code-block">
+if abs(det(A)) < epsilon:
+    return None</div>
+                        
+                        <p><span class="step-number">2</span><strong>Formar matriz aumentada:</strong></p>
+                        <div class="code-block">
+A_aug = [A | I]  # np.hstack([A, np.eye(n)])</div>
+                        
+                        <p><span class="step-number">3</span><strong>Gauss-Jordan:</strong></p>
+                        <div class="code-block">
+Para cada fila i:
+    - Normalizar: A_aug[i] = A_aug[i] / A_aug[i,i]
+    - Eliminar columna i en otras filas:
+      Para j ≠ i:
+        A_aug[j] = A_aug[j] - A_aug[j,i] × A_aug[i]</div>
+                        
+                        <p><span class="step-number">4</span><strong>Extraer inversa:</strong> A⁻¹ = A_aug[:, n:]</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- DIFERENCIAS FINITAS -->
+            <section id="diferencias-finitas" class="section">
+                <h2 class="section-title">📐 DIFERENCIAS FINITAS</h2>
+                
+                <div class="method-card">
+                    <h3 class="method-title">📏 Problemas de Valores de Contorno con Diferencias Finitas</h3>
+                    
+                    <div class="motivation-box">
+                        <h4>🎯 Motivación</h4>
+                        <p>A diferencia de los problemas de valor inicial donde conocés el estado en un punto y "marchás" hacia adelante, los problemas de contorno te dan información en los bordes del dominio y tenés que encontrar qué pasa adentro. Es como conocer la temperatura en las paredes de una habitación y querer saber la distribución de temperatura en el interior.</p>
+                        <p>La idea fundamental de diferencias finitas es reemplazar las derivadas por aproximaciones algebraicas usando puntos vecinos. Por ejemplo, u''(x) ≈ [u(x+h) - 2u(x) + u(x-h)]/h². Esto convierte tu ecuación diferencial en un sistema de ecuaciones algebraicas - uno por cada punto de la grilla. La estructura de la matriz resultante depende del orden de las derivadas y el "stencil" (patrón de puntos) que uses.</p>
+                    </div>
+                    
+                    <div class="when-to-use">
+                        <h4>📐 Cuándo usarlo</h4>
+                        <ul>
+                            <li>EDOs con condiciones en los extremos (no solo en el inicio)</li>
+                            <li>EDPs estacionarias (Laplace, Poisson, biarmónica)</li>
+                            <li>Problemas de autovalores (vibraciones, modos)</li>
+                            <li>Dominios regulares donde podés hacer una grilla uniforme</li>
+                            <li>Cuando necesitás control sobre la precisión local</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="recipe-steps">
+                        <h4>📝 Receta paso a paso GENERALIZADA</h4>
+                        <p><span class="step-number">1</span><strong>Discretizar el dominio:</strong></p>
+                        <div class="code-block">
+# 1D: x = linspace(a, b, N)
+# 2D: [X,Y] = meshgrid(x, y)
+# Elegir h según precisión deseada</div>
+                        
+                        <p><span class="step-number">2</span><strong>Aproximar TODAS las derivadas:</strong></p>
+                        <div class="code-block">
+# Primera derivada: u'(xi) ≈ [u(i+1) - u(i-1)]/(2h)
+# Segunda derivada: u''(xi) ≈ [u(i+1) - 2u(i) + u(i-1)]/h²
+# Derivadas mixtas en 2D: uxy ≈ [u(i+1,j+1) - u(i+1,j-1) - u(i-1,j+1) + u(i-1,j-1)]/(4h²)
+# Orden superior: usar más puntos en el stencil</div>
+                        
+                        <p><span class="step-number">3</span><strong>Construir sistema lineal:</strong></p>
+                        <div class="code-block">
+# Para cada punto interior i:
+#   - Reemplazar derivadas por aproximaciones
+#   - Reorganizar: coeficientes de u(j) → matriz A
+#   - Términos independientes → vector b
+# La estructura de A depende del problema:
+#   - 1D, 2da derivada → tridiagonal
+#   - 2D, Laplaciano → pentadiagonal (5 diagonales)
+#   - Derivadas de orden mayor → más diagonales</div>
+                        
+                        <p><span class="step-number">4</span><strong>Aplicar condiciones de frontera:</strong></p>
+                        <div class="code-block">
+# Dirichlet (valor fijo): u = g en frontera
+#   → Eliminar incógnitas, mover al lado derecho
+# Neumann (derivada fija): ∂u/∂n = g
+#   → Aproximar derivada normal, agregar ecuación
+# Robin (mixta): αu + β∂u/∂n = g
+#   → Combinar ambas aproximaciones
+# Periódicas: u(a) = u(b)
+#   → Identificar incógnitas</div>
+                        
+                        <p><span class="step-number">5</span><strong>Resolver y post-procesar:</strong></p>
+                        <div class="code-block">
+# Sistema pequeño/denso: u = A\b
+# Sistema grande/sparse: usar solver iterativo
+# Reconstruir solución completa incluyendo frontera
+# Calcular derivadas si es necesario (mismo stencil)</div>
+                        
+                        <p><strong>⚠️ Consideraciones importantes:</strong></p>
+                        <ul>
+                            <li>Error = O(h^p) donde p depende del orden del método</li>
+                            <li>Estabilidad: verificar que la matriz sea bien condicionada</li>
+                            <li>Para geometrías complejas → elementos finitos puede ser mejor</li>
+                            <li>En 2D/3D el sistema crece rápidamente → usar matrices sparse</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ANÁLISIS DE CONVERGENCIA -->
+            <section id="convergencia" class="section">
+                <h2 class="section-title">📊 ANÁLISIS DE CONVERGENCIA</h2>
+                
+                <div class="method-card">
+                    <h3 class="method-title">📈 Estudio de Convergencia</h3>
+                    
+                    <div class="motivation-box">
+                        <h4>🎯 Motivación</h4>
+                        <p>En cálculo numérico, no basta con que un algoritmo funcione: necesitás saber QUÉ TAN BIEN funciona. El análisis de convergencia es como hacer control de calidad: ¿qué tan rápido llegamos a la solución? ¿es monótona la convergencia o oscila? ¿cuál es el error final?</p>
+                        <p>Esto te permite elegir el método correcto para tu problema y saber cuándo parar las iteraciones. Un método que converge en 10 iteraciones es mucho mejor que uno que necesita 1000, aunque ambos lleguen a la misma respuesta. Visualizar la convergencia también puede revelar problemas numéricos o inestabilidades.</p>
+                    </div>
+                    
+                    <div class="when-to-use">
+                        <h4>📐 Cuándo usarlo</h4>
+                        <ul>
+                            <li>Comparar diferentes métodos</li>
+                            <li>Elegir parámetros óptimos (tolerancia, paso de tiempo)</li>
+                            <li>Debugging de implementaciones</li>
+                            <li>Verificar comportamiento teórico</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="recipe-steps">
+                        <h4>📝 Receta paso a paso</h4>
+                        <p><span class="step-number">1</span><strong>Ejecutar algoritmo con más iteraciones</strong></p>
+                        
+                        <p><span class="step-number">2</span><strong>Métricas a calcular:</strong></p>
+                        <ul>
+                            <li>Error relativo: |aproximado - exacto|/|exacto| × 100</li>
+                            <li>Verificar monotonía: all(s[i] ≤ s[i+1])</li>
+                            <li>Tasa de convergencia</li>
+                        </ul>
+                        
+                        <p><span class="step-number">3</span><strong>Visualizaciones:</strong></p>
+                        <div class="code-block">
+# Subplot 1: Convergencia completa
+plot(iteraciones, valores)
+axhline(valor_exacto, '--')
+
+# Subplot 2: Zoom inicial
+plot(iteraciones[:20], valores[:20], 'o-')</div>
+                        
+                        <p><span class="step-number">4</span><strong>Reportar:</strong></p>
+                        <ul>
+                            <li>Valor final vs exacto</li>
+                            <li>Número de iteraciones hasta convergencia</li>
+                            <li>Comportamiento cualitativo</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- TIPS GENERALES -->
+            <section id="tips" class="tips-section">
+                <h2 class="section-title" style="color: #e17055;">🎯 TIPS GENERALES DE IMPLEMENTACIÓN</h2>
+                
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <h4>📝 Buenas Prácticas</h4>
+                        <ul>
+                            <li><strong>Siempre trabajar con copias:</strong> A.copy().astype(float)</li>
+                            <li><strong>Verificar condiciones:</strong> pivotes no nulos, matrices invertibles</li>
+                            <li><strong>Control de convergencia:</strong> usar normas consistentes</li>
+                            <li><strong>Documentar unidades:</strong> especialmente en EDOs físicas</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <h4>🔧 Debugging común</h4>
+                        <ul>
+                            <li><strong>División por cero:</strong> verificar pivotes antes de dividir</li>
+                            <li><strong>Tipos de datos:</strong> convertir a float para evitar división entera</li>
+                            <li><strong>Índices:</strong> Python empieza en 0, cuidado con rangos</li>
+                            <li><strong>Convergencia lenta:</strong> verificar condiciones del problema</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <h4>📊 Visualización</h4>
+                        <ul>
+                            <li><strong>EDOs:</strong> graficar solución vs tiempo</li>
+                            <li><strong>Iterativos:</strong> graficar error vs iteración</li>
+                            <li><strong>Sistemas:</strong> usar subplots para comparar métodos</li>
+                            <li><strong>Siempre:</strong> incluir leyendas y etiquetas de ejes</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <a href="#" class="scroll-to-top">↑</a>
+    
+    <script>
+        // Smooth scrolling para navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Mostrar/ocultar botón scroll to top
+        window.addEventListener('scroll', () => {
+            const scrollButton = document.querySelector('.scroll-to-top');
+            if (window.pageYOffset > 300) {
+                scrollButton.style.display = 'flex';
+            } else {
+                scrollButton.style.display = 'none';
+            }
+        });
+        
+        // Animación de entrada para las cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.method-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcialito Cálculo Numérico - Práctica Interactiva</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .exercise {
+            background: white;
+            margin: 25px 0;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #667eea;
+        }
+        
+        .exercise h3 {
+            color: #333;
+            margin-top: 0;
+            font-size: 1.3em;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .problem-statement {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .help-section {
+            margin: 15px 0;
+        }
+        
+        .help-button {
+            background: linear-gradient(135deg, #ffa726 0%, #ff7043 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px 10px 5px 0;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 3px 10px rgba(255,167,38,0.3);
+        }
+        
+        .help-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255,167,38,0.4);
+        }
+        
+        .help-button.revealed {
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            box-shadow: 0 3px 10px rgba(102,187,106,0.3);
+        }
+        
+        .help-content {
+            display: none;
+            background: #fff3e0;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ff7043;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .code-block {
+            background: #263238;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .hint-level {
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .strategy-explanation {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #4caf50;
+            font-style: italic;
+        }
+        
+        .exercise-counter {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="header">
+        <h1>🧮 Parcialito Cálculo Numérico</h1>
+        <p>FCEyN - UBA | Práctica Interactiva</p>
+        <p style="font-size: 0.9em; opacity: 0.9;">Clickea las ayudas solo cuando las necesites</p>
+    </div>
+
+    <!-- Ejercicio 1 -->
+    <div class="exercise">
+        <div class="exercise-counter">Ejercicio 1/10</div>
+        <h3>🔄 Método de Gauss-Seidel</h3>
+        <div class="problem-statement">
+            <strong>Problema:</strong> Resolver el sistema Ax = b usando Gauss-Seidel<br>
+            <strong>A =</strong> [[4,-1,0], [2,7,1], [0,-3,5]]<br>
+            <strong>b =</strong> [15, 20, 10]<br>
+            <strong>Condiciones:</strong> x₀ = [0,0,0], tolerancia = 10⁻⁶, máx 100 iteraciones
+        </div>
+        
+        <div class="strategy-explanation">
+            <strong>🎯 Estrategia de implementación:</strong><br>
+            Vamos a usar el enfoque matricial moderno para Gauss-Seidel. Primero descomponemos A = L + D + U (triangular inferior + diagonal + triangular superior). Luego reformulamos el problema como (D+L)x = -Ux + b, que nos da la iteración x^(k+1) = M_GS · x^(k) + c_GS. Este enfoque es más eficiente que el elemento-a-elemento porque cada iteración es solo una multiplicación matriz-vector. Además, la matriz M_GS nos permite analizar la convergencia: si su radio espectral es menor a 1, el método converge. Esperamos que converja más rápido que Jacobi porque usa valores actualizados inmediatamente.
+        </div>
+        
+        <div class="help-section">
+            <button class="help-button" onclick="toggleHelp('ex1-scheme')">💡 Ver esquema general</button>
+            <button class="help-button" onclick="toggleHelp('ex1-tips')">🔧 Ver tips de implementación</button>
+            <button class="help-button" onclick="toggleHelp('ex1-code')">📝 Ver código completo</button>
+            
+            <div class="help-content" id="ex1-scheme">
+                <div class="hint-level">Nivel 1: Esquema General</div>
+                <strong>Enfoque matricial moderno:</strong><br>
+                1. Descomponer A = L + D + U (inferior + diagonal + superior)<br>
+                2. Reformular: (D+L)x = -Ux + b<br>
+                3. Construir matriz de iteración: M_GS = -(D+L)⁻¹U<br>
+                4. Vector constante: c_GS = (D+L)⁻¹b<br>
+                5. Iterar: x^(k+1) = M_GS · x^(k) + c_GS<br>
+                6. Verificar convergencia con ||x^(k+1) - x^(k)|| < tol
+            </div>
+            
+            <div class="help-content" id="ex1-tips">
+                <div class="hint-level">Nivel 2: Tips de Implementación</div>
+                • D = np.diag(np.diag(A)) - extraer diagonal<br>
+                • L = np.tril(A, -1) - triangular inferior sin diagonal<br>
+                • U = np.triu(A, 1) - triangular superior sin diagonal<br>
+                • Verificar: A = L + D + U debe ser True<br>
+                • M_GS = -np.linalg.inv(D + L) @ U<br>
+                • Una multiplicación matriz-vector por iteración
+            </div>
+            
+            <div class="help-content" id="ex1-code">
+                <div class="hint-level">Nivel 3: Código Completo</div>
+                <div class="code-block">
+def gauss_seidel_matricial(A, b, x0, tol, max_iter):
+    # Descomposición A = L + D + U
+    D = np.diag(np.diag(A))
+    L = np.tril(A, -1)  # k=-1 excluye diagonal
+    U = np.triu(A, 1)   # k=1 excluye diagonal
+    
+    # Verificar descomposición
+    assert np.allclose(A, L + D + U)
+    
+    # Matriz de iteración y vector constante
+    M_gs = -np.linalg.inv(D + L) @ U
+    c_gs = np.linalg.inv(D + L) @ b
+    
+    # Iteración
+    x = x0.copy()
+    for k in range(max_iter):
+        x_anterior = x.copy()
+        x = M_gs @ x + c_gs
+        
+        if np.linalg.norm(x - x_anterior, np.inf) < tol:
+            return x, k+1, np.linalg.eigvals(M_gs)
+    
+    return x, max_iter, np.linalg.eigvals(M_gs)
+
+# Radio espectral para verificar convergencia
+A = np.array([[4,-1,0],[2,7,1],[0,-3,5]], dtype=float)
+b = np.array([15,20,10], dtype=float)
+sol, iter, eigenvals = gauss_seidel_matricial(A, b, [0,0,0], 1e-6, 100)
+print(f"Radio espectral: {max(abs(eigenvals)):.6f}")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ejercicio 2 -->
+    <div class="exercise">
+        <div class="exercise-counter">Ejercicio 2/10</div>
+        <h3>📊 Método de Euler - EDO</h3>
+        <div class="problem-statement">
+            <strong>Problema:</strong> Resolver y' = 2t - y + 1, y(0) = 0<br>
+            <strong>Intervalo:</strong> [0, 2]<br>
+            <strong>Paso:</strong> h = 0.1<br>
+            <strong>Objetivo:</strong> Graficar solución y encontrar y(1)
+        </div>
+        
+        <div class="strategy-explanation">
+            <strong>🎯 Estrategia de implementación:</strong><br>
+            Vamos a resolver esta ecuación diferencial paso a paso. Como no podemos resolver analíticamente, vamos a discretizar el tiempo en pedacitos pequeños (h=0.1) y aproximar la derivada. En cada punto, vamos a usar la pendiente actual para "predecir" el siguiente valor. Es como si fuéramos caminando por la curva solución dando pasos pequeños, donde en cada paso miramos hacia dónde apunta la tangente. Al final vamos a graficar todos los puntos para ver la curva completa, y vamos a verificar específicamente qué valor obtenemos en t=1.
+        </div>
+        
+        <div class="help-section">
+            <button class="help-button" onclick="toggleHelp('ex2-scheme')">💡 Ver esquema general</button>
+            <button class="help-button" onclick="toggleHelp('ex2-tips')">🔧 Ver tips de implementación</button>
+            <button class="help-button" onclick="toggleHelp('ex2-code')">📝 Ver código completo</button>
+            
+            <div class="help-content" id="ex2-scheme">
+                <div class="hint-level">Nivel 1: Esquema General</div>
+                <strong>Fórmula de Euler:</strong> y_{n+1} = y_n + h·f(t_n, y_n)<br>
+                1. Discretizar intervalo con np.arange(t0, tf+h, h)<br>
+                2. Aplicar fórmula iterativamente<br>
+                3. f(t,y) = 2t - y + 1<br>
+                4. Graficar con matplotlib
+            </div>
+            
+            <div class="help-content" id="ex2-tips">
+                <div class="hint-level">Nivel 2: Tips de Implementación</div>
+                • Crear vector t = np.arange(0, 2.1, 0.1)<br>
+                • Inicializar y = np.zeros(len(t)), y[0] = 0<br>
+                • For i in range(1, len(t)): aplicar fórmula<br>
+                • Para y(1): buscar índice donde t ≈ 1.0
+            </div>
+            
+            <div class="help-content" id="ex2-code">
+                <div class="hint-level">Nivel 3: Código Completo</div>
+                <div class="code-block">
+def euler(f, t0, tf, y0, h):
+    t = np.arange(t0, tf + h, h)
+    y = np.zeros(len(t))
+    y[0] = y0
+    
+    for i in range(1, len(t)):
+        y[i] = y[i-1] + h * f(t[i-1], y[i-1])
+    
+    return t, y
+
+def f(t, y):
+    return 2*t - y + 1
+
+t, y = euler(f, 0, 2, 0, 0.1)
+plt.plot(t, y)
+plt.show()
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ejercicio 3 -->
+    <div class="exercise">
+        <div class="exercise-counter">Ejercicio 3/10</div>
+        <h3>📏 Estimación de Norma-2</h3>
+        <div class="problem-statement">
+            <strong>Matriz A =</strong> [[3,1,-1], [1,4,2], [-1,2,5]]<br>
+            <strong>Objetivo:</strong> Estimar ||A||₂ con método iterativo<br>
+            <strong>Algoritmo:</strong> s₁ = 0, s_{k+1} = max{s_k, ||Ax_k||₂/||x_k||₂}<br>
+            <strong>Iteraciones:</strong> 50
+        </div>
+        
+        <div class="strategy-explanation">
+            <strong>🎯 Estrategia de implementación:</strong><br>
+            Queremos estimar cuánto puede "estirar" esta matriz a un vector. La norma-2 nos dice el máximo factor de estiramiento posible. Como no podemos probar todos los vectores infinitos, vamos a hacer un truco: generar vectores aleatorios, aplicarles la matriz, y ver cuánto se estiraron. Vamos a mantener una "marca personal" (el máximo estiramiento visto hasta ahora) que iremos actualizando. Con suficientes intentos aleatorios, deberíamos acercarnos bastante a la norma real. Al final compararemos nuestro resultado con el valor exacto que calcula NumPy.
+        </div>
+        
+        <div class="help-section">
+            <button class="help-button" onclick="toggleHelp('ex3-scheme')">💡 Ver esquema general</button>
+            <button class="help-button" onclick="toggleHelp('ex3-tips')">🔧 Ver tips de implementación</button>
+            <button class="help-button" onclick="toggleHelp('ex3-code')">📝 Ver código completo</button>
+            
+            <div class="help-content" id="ex3-scheme">
+                <div class="hint-level">Nivel 1: Esquema General</div>
+                1. Generar vectores aleatorios x_k unitarios<br>
+                2. Calcular ||A·x_k||₂<br>
+                3. s_k = max{s_{k-1}, ||A·x_k||₂}<br>
+                4. La sucesión converge a ||A||₂<br>
+                5. Comparar con np.linalg.norm(A, 2)
+            </div>
+            
+            <div class="help-content" id="ex3-tips">
+                <div class="hint-level">Nivel 2: Tips de Implementación</div>
+                • x = np.random.randn(n), luego x = x/np.linalg.norm(x)<br>
+                • La sucesión s_k debe ser monótona creciente<br>
+                • Graficar convergencia vs valor exacto<br>
+                • np.random.seed() para reproducibilidad
+            </div>
+            
+            <div class="help-content" id="ex3-code">
+                <div class="hint-level">Nivel 3: Código Completo</div>
+                <div class="code-block">
+def estimar_norma(A, n_iter):
+    s = np.zeros(n_iter)
+    for k in range(1, n_iter):
+        x = np.random.randn(A.shape[0])
+        x = x / np.linalg.norm(x)
+        s[k] = max(s[k-1], np.linalg.norm(A @ x))
+    return s
+
+A = np.array([[3,1,-1],[1,4,2],[-1,2,5]])
+s = estimar_norma(A, 50)
+plt.plot(s)
+plt.axhline(np.linalg.norm(A,2), color='r', linestyle='--')
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ejercicio 4 -->
+    <div class="exercise">
+        <div class="exercise-counter">Ejercicio 4/10</div>
+        <h3>🔢 Diferencias Finitas</h3>
+        <div class="problem-statement">
+            <strong>EDP:</strong> -u'' + 2u = x² en [0,1]<br>
+            <strong>Condiciones frontera:</strong> u(0) = 1, u(1) = 3<br>
+            <strong>Discretización:</strong> N = 10 puntos internos<br>
+            <strong>Objetivo:</strong> Encontrar u(0.5)
+        </div>
+        
+        <div class="strategy-explanation">
+            <strong>🎯 Estrategia de implementación:</strong><br>
+            Tenemos una ecuación diferencial de segundo orden en el espacio, no en el tiempo. Vamos a dividir el intervalo [0,1] en pedacitos y aproximar la segunda derivada usando diferencias finitas. Como conocemos los valores en los extremos (u(0)=1, u(1)=3), solo necesitamos calcular los valores en los puntos internos. Esto nos va a dar un sistema de ecuaciones lineales: una ecuación por cada punto interno. La matriz será tridiagonal (cada punto depende solo de sus vecinos). Una vez que resolvamos el sistema, tendremos la solución aproximada en todos los puntos.
+        </div>
+        
+        <div class="help-section">
+            <button class="help-button" onclick="toggleHelp('ex4-scheme')">💡 Ver esquema general</button>
+            <button class="help-button" onclick="toggleHelp('ex4-tips')">🔧 Ver tips de implementación</button>
+            <button class="help-button" onclick="toggleHelp('ex4-code')">📝 Ver código completo</button>
+            
+            <div class="help-content" id="ex4-scheme">
+                <div class="hint-level">Nivel 1: Esquema General</div>
+                1. u''ᵢ ≈ (uᵢ₊₁ - 2uᵢ + uᵢ₋₁)/h²<br>
+                2. Ecuación: (-2/h² + 2)uᵢ + (1/h²)(uᵢ₋₁ + uᵢ₊₁) = xᵢ²<br>
+                3. Armar matriz tridiagonal A<br>
+                4. Incorporar condiciones de frontera en vector b<br>
+                5. Resolver Au = b
+            </div>
+            
+            <div class="help-content" id="ex4-tips">
+                <div class="hint-level">Nivel 2: Tips de Implementación</div>
+                • h = 1/(N+1), x = np.linspace(0,1,N+2)<br>
+                • Diagonal principal: -2/h² + α<br>
+                • Super/sub diagonales: 1/h²<br>
+                • b[0] -= u0/h², b[-1] -= u1/h²<br>
+                • Concatenar solución: [u0, u_interno, u1]
+            </div>
+            
+            <div class="help-content" id="ex4-code">
+                <div class="hint-level">Nivel 3: Código Completo</div>
+                <div class="code-block">
+def diferencias_finitas(N, alpha, u0, u1):
+    h = 1.0 / (N + 1)
+    x = np.linspace(0, 1, N + 2)
+    
+    A = np.zeros((N, N))
+    for i in range(N):
+        A[i,i] = -2/h**2 + alpha
+        if i > 0: A[i,i-1] = 1/h**2
+        if i < N-1: A[i,i+1] = 1/h**2
+    
+    b = x[1:-1]**2  # f(x) = x²
+    b[0] -= u0/h**2
+    b[-1] -= u1/h**2
+    
+    u_int = np.linalg.solve(A, b)
+    return x, np.concatenate([[u0], u_int, [u1]])
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ejercicio 5 -->
+    <div class="exercise">
+        <div class="exercise-counter">Ejercicio 5/10</div>
+        <h3>🔄 Sistema de EDOs</h3>
+        <div class="problem-statement">
+            <strong>Sistema:</strong> y₁' = y₂, y₂' = -y₁ - 0.1y₂<br>
+            <strong>Condiciones iniciales:</strong> y₁(0) = 1, y₂(0) = 0<br>
+            <strong>Intervalo:</strong> [0, 10], h = 0.05<br>
+            <strong>Objetivo:</strong> Graficar solución y retrato de fase
+        </div>
+        
+        <div class="strategy-explanation">
+            <strong>🎯 Estrategia de implementación:</strong><br>
+            Ahora tenemos dos funciones acopladas que evolucionan juntas en el tiempo. Es como tener un sistema físico donde y₁ podría ser posición e y₂ velocidad. Vamos a extender el método de Euler para manejar vectores: en cada paso calculamos las derivadas de ambas funciones y actualizamos ambas simultáneamente. Después vamos a hacer dos tipos de gráficos: uno temporal (cómo evolucionan y₁ e y₂ vs tiempo) y un "retrato de fase" (gráfico de y₂ vs y₁) que nos muestra la trayectoria en el espacio de estados. Esperamos ver una espiral que converge al origen por el término de amortiguamiento.
+        </div>
+        
+        <div class="help-section">
+            <button class="help-button" onclick="toggleHelp('ex5-scheme')">💡 Ver esquema general</button>
+            <button class="help-button" onclick="toggleHelp('ex5-tips')">🔧 Ver tips de implementación</button>
+            <button class="help-button" onclick="toggleHelp('ex5-code')">📝 Ver código completo</button>
+            
+            <div class="help-content" id="ex5-scheme">
+                <div class="hint-level">Nivel 1: Esquema General</div>
+                1. Definir F(t,Y) = [y₂, -y₁ - 0.1y₂]<br>
+                2. Y = [y₁, y₂] vector estado<br>
+                3. Euler vectorial: Y_{n+1} = Y_n + h·F(t_n, Y_n)<br>
+                4. Separar componentes para graficar<br>
+                5. Retrato de fase: plot(y₁, y₂)
+            </div>
+            
+            <div class="help-content" id="ex5-tips">
+                <div class="hint-level">Nivel 2: Tips de Implementación</div>
+                • Y = np.zeros((2, len(t))) para almacenar<br>
+                • Y[:,0] = [1, 0] condición inicial<br>
+                • F debe retornar np.array([dy1, dy2])<br>
+                • Comportamiento esperado: espiral hacia origen
+            </div>
+            
+            <div class="help-content" id="ex5-code">
+                <div class="hint-level">Nivel 3: Código Completo</div>
+                <div class="code-block">
+def euler_sistema(F, t0, tf, y0, h):
+    t = np.arange(t0, tf + h, h)
+    Y = np.zeros((len(y0), len(t)))
+    Y[:,0] = y0
+    
+    for i in range(1, len(t)):
+        Y[:,i] = Y[:,i-1] + h * F(t[i-1], Y[:,i-1])
+    return t, Y
+
+def sistema(t, Y):
+    return np.array([Y[1], -Y[0] - 0.1*Y[1]])
+
+t, Y = euler_sistema(sistema, 0, 10, [1,0], 0.05)
+plt.plot(Y[0,:], Y[1,:])  # retrato de fase
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ejercicio 6 -->
+    <div class="exercise">
+        <div class="exercise-counter">Ejercicio 6/10</div>
+        <h3>⬇️ Eliminación Gaussiana</h3>
+        <div class="problem-statement">
+            <strong>Sistema:</strong> Ax = b<br>
+            <strong>A =</strong> [[2,1,-1], [4,5,3], [2,1,4]]<br>
+            <strong>b =</strong> [8, 9, 11]<br>
+            <strong>Método:</strong> Eliminación gaussiana SIN pivoteo<br>
+            <strong>Objetivo:</strong> Mostrar matriz escalonada y solución
+        </div>
+        
+        <div class="strategy-explanation">
+            <strong>🎯 Estrategia de implementación:</strong><br>
+            Vamos a resolver este sistema usando el método clásico que aprendiste en álgebra lineal, pero implementándolo paso a paso. Primero vamos a hacer "ceros" debajo de la diagonal principal: usaremos la primera fila para eliminar elementos de las filas siguientes, luego la segunda fila para eliminar de las que quedan, y así. Una vez que tengamos la matriz triangular superior, vamos a resolver "hacia atrás": empezamos por la última ecuación (que solo tiene una incógnita), la resolvemos, y vamos subiendo sustituyendo los valores ya encontrados. Es como desarmar un problema complejo en pasos más simples.
+        </div>
+        
+        <div class="help-section">
+            <button class="help-button" onclick="toggleHelp('ex6-scheme')">💡 Ver esquema general</button>
+            <button class="help-button" onclick="toggleHelp('ex6-tips')">🔧 Ver tips de implementación</button>
+            <button class="help-button" onclick="toggleHelp('ex6-code')">📝 Ver código completo</button>
+            
+            <div class="help-content" id="ex6-scheme">
+                <div class="hint-level">Nivel 1: Esquema General</div>
+                <strong>Dos etapas:</strong><br>
+                1. <strong>Eliminación hacia adelante:</strong> crear ceros bajo la diagonal<br>
+                2. <strong>Sustitución hacia atrás:</strong> resolver desde la última ecuación<br>
+                • Factor = A[i,k]/A[k,k]<br>
+                • Fila[i] = Fila[i] - factor × Fila[k]
+            </div>
+            
+            <div class="help-content" id="ex6-tips">
+                <div class="hint-level">Nivel 2: Tips de Implementación</div>
+                • Trabajar con copias: A.copy().astype(float)<br>
+                • For k in range(n-1): para cada pivote<br>
+                • For i in range(k+1,n): filas debajo del pivote<br>
+                • Actualizar tanto A[i,j] como b[i]<br>
+                • Sustitución: x[i] = (b[i] - suma)/A[i,i]
+            </div>
+            
+            <div class="help-content" id="ex6-code">
+                <div class="hint-level">Nivel 3: Código Completo</div>
+                <div class="code-block">
+def eliminacion_gaussiana(A, b):
+    n = len(A)
+    A = A.copy().astype(float)
+    b = b.copy().astype(float)
+    
+    # Eliminación hacia adelante
+    for k in range(n-1):
+        for i in range(k+1, n):
+            factor = A[i,k] / A[k,k]
+            for j in range(k, n):
+                A[i,j] -= factor * A[k,j]
+            b[i] -= factor * b[k]
+    
+    # Sustitución hacia atrás
+    x = np.zeros(n)
+    for i in range(n-1, -1, -1):
+        x[i] = b[i]
+        for j in range(i+1, n):
+            x[i] -= A[i,j] * x[j]
+        x[i] /= A[i,i]
+    
+    return A, x
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ejercicio 7 -->
+    <div class="exercise">
+        <div class="exercise-counter">Ejercicio 7/10</div>
+        <h3>📈 EDO con Parámetro</h3>
+        <div class="problem-statement">
+            <strong>EDO:</strong> y' = (y-3)(sin²(t)-0.3)<br>
+            <strong>Condiciones iniciales:</strong> y(0) = k para k = 0,1,2,3,4,5,6<br>
+            <strong>Intervalo:</strong> [0, 5], h = 0.01<br>
+            <strong>Objetivo:</strong> Graficar familia de soluciones, identificar equilibrio
+        </div>
+        
+        <div class="strategy-explanation">
+            <strong>🎯 Estrategia de implementación:</strong><br>
+            Acá vamos a estudiar cómo se comporta una misma ecuación diferencial con diferentes puntos de partida. La ecuación tiene una característica interesante: cuando y=3, la derivada se hace cero (porque y-3=0), así que ese es un punto de equilibrio. Vamos a resolver la EDO múltiples veces, cada una empezando desde un valor diferente, y graficar todas las soluciones juntas. Esto nos va a mostrar el "campo de flujo" de la ecuación: hacia dónde "fluyen" las soluciones dependiendo de dónde empiecen. Esperamos ver que todas las trayectorias converjan hacia la línea y=3.
+        </div>
+        
+        <div class="help-section">
+            <button class="help-button" onclick="toggleHelp('ex7-scheme')">💡 Ver esquema general</button>
+            <button class="help-button" onclick="toggleHelp('ex7-tips')">🔧 Ver tips de implementación</button>
+            <button class="help-button" onclick="toggleHelp('ex7-code')">📝 Ver código completo</button>
+            
+            <div class="help-content" id="ex7-scheme">
+                <div class="hint-level">Nivel 1: Esquema General</div>
+                1. Definir f(t,y) = (y-3)(sin²(t)-0.3)<br>
+                2. For k in [0,1,2,3,4,5,6]: resolver EDO con y(0)=k<br>
+                3. Graficar todas en el mismo plot<br>
+                4. Observar: y=3 es línea de equilibrio<br>
+                5. Comportamiento: convergencia/divergencia según condición inicial
+            </div>
+            
+            <div class="help-content" id="ex7-tips">
+                <div class="hint-level">Nivel 2: Tips de Implementación</div>
+                • Usar el mismo euler() del ejercicio 2<br>
+                • Loop over diferentes valores de k<br>
+                • plt.plot(t, y, label=f'y(0)={k}') para cada solución<br>
+                • plt.axhline(y=3, linestyle='--') para equilibrio<br>
+                • Observar: soluciones convergen a y=3
+            </div>
+            
+            <div class="help-content" id="ex7-code">
+                <div class="hint-level">Nivel 3: Código Completo</div>
+                <div class="code-block">
+def f_parametrizada(t, y):
+    return (y - 3) * (np.sin(t)**2 - 0.3)
+
+plt.figure(figsize=(10, 6))
+for k in [0, 1, 2, 3, 4, 5, 6]:
+    t, y = euler(f_parametrizada, 0, 5, k, 0.01)
+    plt.plot(t, y, label=f'y(0)={k}')
+
+plt.axhline(y=3, color='black', linestyle='--', 
+           alpha=0.7, label='Equilibrio y=3')
+plt.xlim(0, 5)
+plt.ylim(-2, 8)
+plt.xlabel('t')
+plt.ylabel('y(t)')
+plt.legend()
+plt.grid(True)
+plt.title('Familia de soluciones')
+plt.show()
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ejercicio 8 -->
+    <div class="exercise">
+        <div class="exercise-counter">Ejercicio 8/10</div>
+        <h3>🔄 Método de Jacobi</h3>
+        <div class="problem-statement">
+            <strong>Sistema:</strong> Ax = b<br>
+            <strong>A =</strong> [[10,-1,2], [-1,11,-1], [2,-1,10]]<br>
+            <strong>b =</strong> [6, 25, -11]<br>
+            <strong>Condiciones:</strong> x₀=[0,0,0], tol=10⁻⁸, máx 1000 iter<br>
+            <strong>Objetivo:</strong> Verificar convergencia y comparar con Gauss-Seidel
+        </div>
+        
+        <div class="strategy-explanation">
+            <strong>🎯 Estrategia de implementación:</strong><br>
+            Vamos a implementar Jacobi usando el enfoque matricial, que es más elegante que el elemento-a-elemento. Usamos la misma descomposición A = L + D + U, pero ahora agrupamos diferente: Dx = -(L+U)x + b, lo que nos da x^(k+1) = M_J · x^(k) + c_J. La diferencia clave con Gauss-Seidel es que Jacobi usa TODOS los valores de la iteración anterior, lo que lo hace paralelizable pero generalmente más lento. Vamos a comparar su radio espectral con Gauss-Seidel para ver por qué uno converge más rápido que el otro. El método es ideal cuando queremos implementación paralela.
+        </div>
+        
+        <div class="help-section">
+            <button class="help-button" onclick="toggleHelp('ex8-scheme')">💡 Ver esquema general</button>
+            <button class="help-button" onclick="toggleHelp('ex8-tips')">🔧 Ver tips de implementación</button>
+            <button class="help-button" onclick="toggleHelp('ex8-code')">📝 Ver código completo</button>
+            
+            <div class="help-content" id="ex8-scheme">
+                <div class="hint-level">Nivel 1: Esquema General</div>
+                <strong>Diferencia clave con Gauss-Seidel:</strong><br>
+                • Jacobi: usar TODOS los valores de iteración anterior x^k<br>
+                • No actualizar componentes durante la misma iteración<br>
+                • Calcular completamente x^{k+1} antes de siguiente iteración<br>
+                • Generalmente converge más lento
+            </div>
+            
+            <div class="help-content" id="ex8-tips">
+                <div class="hint-level">Nivel 2: Tips de Implementación</div>
+                • Misma descomposición que Gauss-Seidel: A = L + D + U<br>
+                • M_J = -np.linalg.inv(D) @ (L + U)<br>
+                • c_J = np.linalg.inv(D) @ b<br>
+                • Comparar radio espectral: ρ(M_J) vs ρ(M_GS)<br>
+                • Paralelizable: cada componente se calcula independientemente<br>
+                • Generalmente ρ(M_J) > ρ(M_GS) → converge más lento
+            </div>
+            
+            <div class="help-content" id="ex8-code">
+                <div class="hint-level">Nivel 3: Código Completo</div>
+                <div class="code-block">
+def jacobi(A, b, x0, tol, max_iter):
+    n = len(A)
+    x = x0.copy()
+    
+    for k in range(max_iter):
+        x_nuevo = np.zeros(n)
+        
+        for i in range(n):
+            suma = 0
+            for j in range(n):
+                if i != j:
+                    suma += A[i,j] * x[j]  # valores anteriores
+            x_nuevo[i] = (b[i] - suma) / A[i,i]
+        
+        if np.linalg.norm(x_nuevo - x) < tol:
+            return x_nuevo, k+1, True
+        
+        x = x_nuevo.copy()
+    
+    return x, max_iter, False
+
+A = np.array([[10,-1,2],[-1,11,-1],[2,-1,10]], dtype=float)
+b = np.array([6,25,-11], dtype=float)
+sol, iter, convergio = jacobi(A, b, [0,0,0], 1e-8, 1000)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ejercicio 9 -->
+    <div class="exercise">
+        <div class="exercise-counter">Ejercicio 9/10</div>
+        <h3>🔄 Matriz Inversa</h3>
+        <div class="problem-statement">
+            <strong>Matriz A =</strong> [[4,7], [2,6]]<br>
+            <strong>Método:</strong> Eliminación Gauss-Jordan<br>
+            <strong>Objetivo:</strong> Calcular A⁻¹ y verificar A·A⁻¹ = I<br>
+            <strong>Verificación:</strong> Comparar con np.linalg.inv(A)
+        </div>
+        
+        <div class="strategy-explanation">
+            <strong>🎯 Estrategia de implementación:</strong><br>
+            Vamos a calcular la inversa usando una extensión elegante de la eliminación gaussiana. La idea es resolver múltiples sistemas a la vez: en lugar de resolver Ax=b para un solo vector b, vamos a resolver para todos los vectores de la matriz identidad simultáneamente. Construimos una matriz "aumentada" [A|I] y aplicamos operaciones de fila hasta convertirla en [I|A⁻¹]. Es como si estuviéramos preguntando: "¿qué matriz, multiplicada por A, da la identidad?". Al final vamos a verificar que nuestro resultado es correcto multiplicando A por nuestra inversa calculada.
+        </div>
+        
+        <div class="help-section">
+            <button class="help-button" onclick="toggleHelp('ex9-scheme')">💡 Ver esquema general</button>
+            <button class="help-button" onclick="toggleHelp('ex9-tips')">🔧 Ver tips de implementación</button>
+            <button class="help-button" onclick="toggleHelp('ex9-code')">📝 Ver código completo</button>
+            
+            <div class="help-content" id="ex9-scheme">
+                <div class="hint-level">Nivel 1: Esquema General</div>
+                <strong>Proceso Gauss-Jordan:</strong> [A|I] → [I|A⁻¹]<br>
+                1. Formar matriz aumentada [A|I]<br>
+                2. Para cada fila i: normalizar dividiendo por A[i,i]<br>
+                3. Eliminar columna i en todas las otras filas<br>
+                4. Resultado: lado derecho es A⁻¹<br>
+                5. Verificar: A @ A_inv ≈ I
+            </div>
+            
+            <div class="help-content" id="ex9-tips">
+                <div class="hint-level">Nivel 2: Tips de Implementación</div>
+                • A_aug = np.hstack([A.copy(), np.eye(n)])<br>
+                • Para fila i: A_aug[i] = A_aug[i] / A_aug[i,i]<br>
+                • Para otras filas j≠i: A_aug[j] -= A_aug[j,i] * A_aug[i]<br>
+                • Verificar det(A) ≠ 0 antes de empezar<br>
+                • Retornar A_aug[:, n:] (lado derecho)
+            </div>
+            
+            <div class="help-content" id="ex9-code">
+                <div class="hint-level">Nivel 3: Código Completo</div>
+                <div class="code-block">
+def matriz_inversa(A):
+    n = len(A)
+    # Verificar que es invertible
+    if abs(np.linalg.det(A)) < 1e-10:
+        return None
+    
+    # Matriz aumentada [A|I]
+    A_aug = np.hstack([A.copy().astype(float), np.eye(n)])
+    
+    # Gauss-Jordan
+    for i in range(n):
+        # Normalizar fila i
+        A_aug[i] = A_aug[i] / A_aug[i,i]
+        
+        # Eliminar columna i en otras filas
+        for j in range(n):
+            if i != j:
+                A_aug[j] = A_aug[j] - A_aug[j,i] * A_aug[i]
+    
+    return A_aug[:, n:]
+
+A = np.array([[4,7],[2,6]])
+A_inv = matriz_inversa(A)
+print("A⁻¹ =", A_inv)
+print("Verificación:", A @ A_inv)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ejercicio 10 -->
+    <div class="exercise">
+        <div class="exercise-counter">Ejercicio 10/10</div>
+        <h3>📊 Convergencia de Norma</h3>
+        <div class="problem-statement">
+            <strong>Matriz A =</strong> [[1,2,0], [0,3,1], [1,0,2]]<br>
+            <strong>Algoritmo:</strong> Mismo que ejercicio 3 pero con 100 iteraciones<br>
+            <strong>Objetivo:</strong> Estudiar convergencia, monotonía y error<br>
+            <strong>Análisis:</strong> Graficar convergencia y primeras 20 iteraciones
+        </div>
+        
+        <div class="strategy-explanation">
+            <strong>🎯 Estrategia de implementación:</strong><br>
+            Vamos a hacer un análisis más profundo del comportamiento del algoritmo de estimación de norma. Usando más iteraciones (100 en lugar de 50), queremos estudiar si realmente la sucesión es monótona creciente como dice la teoría, qué tan rápido converge, y qué tan preciso es el resultado final. Vamos a crear visualizaciones que nos muestren tanto el panorama completo de la convergencia como un "zoom" a las primeras iteraciones para ver el comportamiento inicial. También vamos a calcular métricas numéricas: error relativo, verificación de monotonía, y comparación con el valor exacto.
+        </div>
+        
+        <div class="help-section">
+            <button class="help-button" onclick="toggleHelp('ex10-scheme')">💡 Ver esquema general</button>
+            <button class="help-button" onclick="toggleHelp('ex10-tips')">🔧 Ver tips de implementación</button>
+            <button class="help-button" onclick="toggleHelp('ex10-code')">📝 Ver código completo</button>
+            
+            <div class="help-content" id="ex10-scheme">
+                <div class="hint-level">Nivel 1: Esquema General</div>
+                1. Reutilizar función estimar_norma() del ejercicio 3<br>
+                2. Aumentar iteraciones a 100<br>
+                3. Crear dos subplots: convergencia completa y zoom<br>
+                4. Verificar monotonía: s[k] ≤ s[k+1] para todo k<br>
+                5. Calcular error relativo final
+            </div>
+            
+            <div class="help-content" id="ex10-tips">
+                <div class="hint-level">Nivel 2: Tips de Implementación</div>
+                • plt.subplot(1,2,1) y plt.subplot(1,2,2)<br>
+                • s[:20] para primeras 20 iteraciones<br>
+                • all(s[i] <= s[i+1] for i in range(len(s)-1))<br>
+                • Error: abs(s[-1] - norma_exacta)/norma_exacta * 100<br>
+                • plt.tight_layout() para mejor visualización
+            </div>
+            
+            <div class="help-content" id="ex10-code">
+                <div class="hint-level">Nivel 3: Código Completo</div>
+                <div class="code-block">
+A = np.array([[1,2,0],[0,3,1],[1,0,2]], dtype=float)
+s = estimar_norma(A, 100)  # Reusar función del ejercicio 3
+norma_exacta = np.linalg.norm(A, 2)
+
+plt.figure(figsize=(12, 5))
+
+# Convergencia completa
+plt.subplot(1, 2, 1)
+plt.plot(s, 'b-')
+plt.axhline(y=norma_exacta, color='r', linestyle='--', label='Norma exacta')
+plt.xlabel('Iteración k')
+plt.ylabel('s_k')
+plt.title('Convergencia completa')
+plt.legend()
+plt.grid(True)
+
+# Primeras 20 iteraciones
+plt.subplot(1, 2, 2)
+plt.plot(s[:20], 'b-o')
+plt.axhline(y=norma_exacta, color='r', linestyle='--', label='Norma exacta')
+plt.xlabel('Iteración k')
+plt.ylabel('s_k')
+plt.title('Primeras 20 iteraciones')
+plt.legend()
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+
+print(f"Valor final: {s[-1]:.6f}")
+print(f"Norma exacta: {norma_exacta:.6f}")
+print(f"Error relativo: {abs(s[-1]-norma_exacta)/norma_exacta*100:.4f}%")
+print(f"Es monótona: {all(s[i] <= s[i+1] for i in range(len(s)-1))}")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let revealedHelps = new Set();
+        
+        function toggleHelp(helpId) {
+            const helpContent = document.getElementById(helpId);
+            const button = event.target;
+            
+            if (helpContent.style.display === 'none' || helpContent.style.display === '') {
+                helpContent.style.display = 'block';
+                button.classList.add('revealed');
+                button.textContent = button.textContent.replace('Ver', 'Ocultar');
+                revealedHelps.add(helpId);
+            } else {
+                helpContent.style.display = 'none';
+                button.classList.remove('revealed');
+                button.textContent = button.textContent.replace('Ocultar', 'Ver');
+                revealedHelps.delete(helpId);
+            }
+            
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const totalHelps = document.querySelectorAll('.help-content').length;
+            const progress = (revealedHelps.size / totalHelps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+        
+        // Efecto de escritura para el título
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

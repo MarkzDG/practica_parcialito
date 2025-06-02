@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de Ejercicios - Cálculo Numérico</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            color: #2d3436;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .topic-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .topic-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .topic-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .topic-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        
+        .topic-title {
+            font-size: 1.5em;
+            color: #2d3436;
+            flex-grow: 1;
+        }
+        
+        .exercise-count {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .exercise {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .exercise:hover {
+            background: #f0f1f3;
+            border-left-color: #764ba2;
+            transform: translateX(5px);
+        }
+        
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .exercise-number {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+        
+        .difficulty {
+            padding: 3px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        
+        .difficulty.easy {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .difficulty.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .difficulty.hard {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .exercise-content {
+            color: #2d3436;
+            margin-top: 10px;
+        }
+        
+        .parameters {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .questions {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+        
+        .questions li {
+            margin: 5px 0;
+            color: #555;
+        }
+        
+        .tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+        
+        .nav {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 8px 12px;
+            margin: 5px 0;
+            text-decoration: none;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item:hover {
+            background: #f0f0f0;
+            color: #667eea;
+            transform: translateX(-5px);
+        }
+        
+        @media (max-width: 1200px) {
+            .nav {
+                display: none;
+            }
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            margin-top: 60px;
+        }
+        
+        .note {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Banco de Ejercicios - Cálculo Numérico</h1>
+            <p>FCEyN - UBA | Práctica completa con variantes</p>
+            <div class="note">
+                <strong>📌 Nota:</strong> Cada ejercicio incluye múltiples variantes con diferentes valores y preguntas. 
+                Practica con diferentes combinaciones para dominar cada tema.
+            </div>
+        </header>
+        
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterExercises('all')">Todos</button>
+            <button class="filter-btn" onclick="filterExercises('easy')">Fácil</button>
+            <button class="filter-btn" onclick="filterExercises('medium')">Medio</button>
+            <button class="filter-btn" onclick="filterExercises('hard')">Difícil</button>
+        </div>
+        
+        <!-- Navegación lateral -->
+        <nav class="nav">
+            <a href="#sistemas-lineales" class="nav-item">📐 Sistemas Lineales</a>
+            <a href="#metodos-iterativos" class="nav-item">🔄 Métodos Iterativos</a>
+            <a href="#edo-basicas" class="nav-item">📈 EDOs Básicas</a>
+            <a href="#sistemas-edo" class="nav-item">🔗 Sistemas EDO</a>
+            <a href="#edp" class="nav-item">🌊 EDPs</a>
+            <a href="#normas" class="nav-item">📏 Normas</a>
+        </nav>
+        
+        <!-- SECCIÓN 1: SISTEMAS LINEALES -->
+        <section id="sistemas-lineales" class="topic-section">
+            <div class="topic-header">
+                <span class="topic-icon">📐</span>
+                <h2 class="topic-title">Sistemas de Ecuaciones Lineales</h2>
+                <span class="exercise-count">8 ejercicios</span>
+            </div>
+            
+            <div class="exercise" data-difficulty="easy">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 1.1</span>
+                    <span class="difficulty easy">Fácil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Eliminación Gaussiana sin pivoteo</strong></p>
+                    <div class="parameters">
+                        Variante A: A = [[4,2,1], [3,5,2], [1,1,3]], b = [11,13,8]<br>
+                        Variante B: A = [[5,1,2], [2,4,1], [1,2,6]], b = [13,11,14]<br>
+                        Variante C: A = [[3,-1,2], [1,4,-1], [2,1,5]], b = [10,8,16]
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar eliminación gaussiana sin pivoteo</li>
+                        <li>Mostrar la matriz triangular superior resultante</li>
+                        <li>Calcular el determinante usando el producto de la diagonal</li>
+                        <li>Verificar la solución: ||Ax - b||</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Eliminación Gaussiana</span>
+                        <span class="tag">Sin Pivoteo</span>
+                        <span class="tag">Determinante</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="medium">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 1.2</span>
+                    <span class="difficulty medium">Medio</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Eliminación Gaussiana con pivoteo parcial</strong></p>
+                    <div class="parameters">
+                        Variante A: A = [[0.001,2,3], [1,0.5,1], [2,1,0.5]], b = [5.001,2.5,3.5]<br>
+                        Variante B: A = [[1,2,3], [4,5,6], [7,8,10]], b = [6,15,25]<br>
+                        Variante C: A = [[2,1,3,1], [1,3,2,1], [3,2,4,1], [1,1,1,5]], b = [10,11,16,10]
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar con pivoteo parcial</li>
+                        <li>Registrar los intercambios de filas realizados</li>
+                        <li>Comparar resultados con y sin pivoteo</li>
+                        <li>Analizar la estabilidad numérica</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Pivoteo Parcial</span>
+                        <span class="tag">Estabilidad</span>
+                        <span class="tag">Comparación</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="hard">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 1.3</span>
+                    <span class="difficulty hard">Difícil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Factorización LU</strong></p>
+                    <div class="parameters">
+                        Variante A: A = [[4,3,2], [2,5,3], [1,2,6]]<br>
+                        Variante B: A = [[7,3,1,2], [2,8,2,1], [1,2,9,3], [2,1,3,10]]<br>
+                        Variante C: A matriz tridiagonal 5x5 con diagonal principal = 4, subdiagonales = -1
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar factorización LU (Doolittle)</li>
+                        <li>Resolver múltiples sistemas Ax = b_i con diferentes b</li>
+                        <li>Calcular número de condición de A</li>
+                        <li>Comparar eficiencia con eliminación gaussiana directa</li>
+                        <li>Verificar que A = LU</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Factorización LU</span>
+                        <span class="tag">Doolittle</span>
+                        <span class="tag">Número de Condición</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="medium">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 1.4</span>
+                    <span class="difficulty medium">Medio</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Matriz Inversa por Gauss-Jordan</strong></p>
+                    <div class="parameters">
+                        Variante A: A = [[3,1], [2,4]]<br>
+                        Variante B: A = [[2,1,0], [1,3,1], [0,1,2]]<br>
+                        Variante C: A = [[5,2,1], [2,6,2], [1,2,7]]
+                    </div>
+                    <ul class="questions">
+                        <li>Calcular A⁻¹ usando Gauss-Jordan</li>
+                        <li>Verificar que A·A⁻¹ = I</li>
+                        <li>Calcular ||A|| · ||A⁻¹|| (número de condición)</li>
+                        <li>Resolver Ax = b usando A⁻¹ y comparar con solución directa</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Gauss-Jordan</span>
+                        <span class="tag">Matriz Inversa</span>
+                        <span class="tag">Verificación</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SECCIÓN 2: MÉTODOS ITERATIVOS -->
+        <section id="metodos-iterativos" class="topic-section">
+            <div class="topic-header">
+                <span class="topic-icon">🔄</span>
+                <h2 class="topic-title">Métodos Iterativos para Sistemas Lineales</h2>
+                <span class="exercise-count">6 ejercicios</span>
+            </div>
+            
+            <div class="exercise" data-difficulty="easy">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 2.1</span>
+                    <span class="difficulty easy">Fácil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Método de Jacobi</strong></p>
+                    <div class="parameters">
+                        Variante A: A = [[4,1,0], [1,4,1], [0,1,4]], b = [10,12,14]<br>
+                        Variante B: A = [[5,-1,1], [-1,6,-2], [1,-2,7]], b = [10,9,15]<br>
+                        Variante C: A = [[10,2,1], [1,8,2], [2,1,10]], b = [27,25,31]
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar Jacobi (enfoque elemento a elemento)</li>
+                        <li>x₀ = [0,0,0], tolerancia = 10⁻⁶, máx 100 iteraciones</li>
+                        <li>Graficar convergencia: ||x^(k+1) - x^(k)|| vs k</li>
+                        <li>Verificar criterio de convergencia (diagonal dominante)</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Jacobi</span>
+                        <span class="tag">Convergencia</span>
+                        <span class="tag">Diagonal Dominante</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="medium">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 2.2</span>
+                    <span class="difficulty medium">Medio</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Método de Gauss-Seidel</strong></p>
+                    <div class="parameters">
+                        Variante A: Mismas matrices que Jacobi 2.1<br>
+                        Variante B: A = [[4,2,1], [1,5,2], [2,3,10]], b = [11,13,25]<br>
+                        Variante C: Sistema tridiagonal 10x10
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar Gauss-Seidel</li>
+                        <li>Comparar velocidad de convergencia con Jacobi</li>
+                        <li>Graficar ambos métodos en el mismo plot</li>
+                        <li>Calcular número de iteraciones para cada método</li>
+                        <li>Analizar por qué G-S converge más rápido</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Gauss-Seidel</span>
+                        <span class="tag">Comparación</span>
+                        <span class="tag">Convergencia</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="hard">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 2.3</span>
+                    <span class="difficulty hard">Difícil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Análisis matricial de métodos iterativos</strong></p>
+                    <div class="parameters">
+                        A = [[6,2,1], [2,7,2], [1,2,8]]<br>
+                        b = [15,19,21]
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar ambos métodos usando enfoque matricial</li>
+                        <li>Calcular matrices de iteración M_J y M_GS</li>
+                        <li>Calcular radios espectrales ρ(M_J) y ρ(M_GS)</li>
+                        <li>Verificar que ρ < 1 garantiza convergencia</li>
+                        <li>Estimar tasa de convergencia: -log₁₀(ρ)</li>
+                        <li>Graficar autovalores en el plano complejo</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Análisis Matricial</span>
+                        <span class="tag">Radio Espectral</span>
+                        <span class="tag">Autovalores</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="hard">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 2.4</span>
+                    <span class="difficulty hard">Difícil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Método SOR (Successive Over-Relaxation)</strong></p>
+                    <div class="parameters">
+                        A = [[4,3,0], [3,4,-1], [0,-1,4]]<br>
+                        b = [24,30,-24]
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar SOR con parámetro ω</li>
+                        <li>Encontrar ω óptimo experimentalmente (probar ω ∈ [0.5, 1.9])</li>
+                        <li>Comparar convergencia para diferentes ω</li>
+                        <li>Graficar iteraciones vs ω</li>
+                        <li>Verificar que ω=1 recupera Gauss-Seidel</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">SOR</span>
+                        <span class="tag">Optimización</span>
+                        <span class="tag">Parámetros</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SECCIÓN 3: EDOs BÁSICAS -->
+        <section id="edo-basicas" class="topic-section">
+            <div class="topic-header">
+                <span class="topic-icon">📈</span>
+                <h2 class="topic-title">Ecuaciones Diferenciales Ordinarias</h2>
+                <span class="exercise-count">8 ejercicios</span>
+            </div>
+            
+            <div class="exercise" data-difficulty="easy">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 3.1</span>
+                    <span class="difficulty easy">Fácil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Método de Euler - EDO simple</strong></p>
+                    <div class="parameters">
+                        Variante A: y' = -2y + 1, y(0) = 1, [0,3], h = 0.1<br>
+                        Variante B: y' = y + t, y(0) = 0, [0,2], h = 0.05<br>
+                        Variante C: y' = -y + sin(t), y(0) = 0, [0,4π], h = 0.1
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar método de Euler</li>
+                        <li>Graficar solución numérica</li>
+                        <li>Calcular y(1) y y(tfinal)</li>
+                        <li>Si existe solución analítica, comparar errores</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Euler</span>
+                        <span class="tag">EDO Básica</span>
+                        <span class="tag">Implementación</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="medium">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 3.2</span>
+                    <span class="difficulty medium">Medio</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Comparación de métodos</strong></p>
+                    <div class="parameters">
+                        EDO: y' = -y + t², y(0) = 1<br>
+                        Intervalo: [0, 5]<br>
+                        Pasos: h = 0.1, 0.05, 0.01
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar Euler, Euler mejorado (Heun) y RK4</li>
+                        <li>Comparar errores para diferentes h</li>
+                        <li>Graficar log(error) vs log(h)</li>
+                        <li>Verificar órdenes de convergencia (pendientes)</li>
+                        <li>Comparar tiempos de ejecución</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Comparación</span>
+                        <span class="tag">Orden de Convergencia</span>
+                        <span class="tag">RK4</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="medium">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 3.3</span>
+                    <span class="difficulty medium">Medio</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>EDO con parámetro - Análisis de comportamiento</strong></p>
+                    <div class="parameters">
+                        Variante A: y' = α(y - 2)², y(0) = k, α ∈ {-1, 0, 1}<br>
+                        Variante B: y' = y(y - 2)(y - 4), y(0) = k ∈ [0, 5]<br>
+                        Variante C: y' = -y + α·sin(t), y(0) = 0, α ∈ {0.5, 1, 2}
+                    </div>
+                    <ul class="questions">
+                        <li>Resolver para múltiples valores del parámetro</li>
+                        <li>Identificar puntos de equilibrio</li>
+                        <li>Graficar familia de soluciones</li>
+                        <li>Analizar estabilidad de equilibrios</li>
+                        <li>Crear diagrama de bifurcación si aplica</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Parámetros</span>
+                        <span class="tag">Equilibrio</span>
+                        <span class="tag">Estabilidad</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="hard">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 3.4</span>
+                    <span class="difficulty hard">Difícil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Problema stiff - Métodos implícitos</strong></p>
+                    <div class="parameters">
+                        EDO: y' = -1000(y - cos(t)) - sin(t)<br>
+                        y(0) = 0, intervalo [0, 2]
+                    </div>
+                    <ul class="questions">
+                        <li>Intentar resolver con Euler explícito (h grande falla)</li>
+                        <li>Implementar Euler implícito (backward Euler)</li>
+                        <li>Comparar estabilidad de ambos métodos</li>
+                        <li>Encontrar h crítico para Euler explícito</li>
+                        <li>Usar solve_ivp con método 'Radau' (implícito)</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Stiff</span>
+                        <span class="tag">Métodos Implícitos</span>
+                        <span class="tag">Estabilidad</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SECCIÓN 4: SISTEMAS DE EDOs -->
+        <section id="sistemas-edo" class="topic-section">
+            <div class="topic-header">
+                <span class="topic-icon">🔗</span>
+                <h2 class="topic-title">Sistemas de EDOs</h2>
+                <span class="exercise-count">6 ejercicios</span>
+            </div>
+            
+            <div class="exercise" data-difficulty="easy">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 4.1</span>
+                    <span class="difficulty easy">Fácil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Sistema 2x2 - Oscilador armónico</strong></p>
+                    <div class="parameters">
+                        Variante A: x' = v, v' = -x (sin amortiguamiento)<br>
+                        Variante B: x' = v, v' = -x - 0.2v (con amortiguamiento)<br>
+                        Variante C: x' = v, v' = -4x - 0.5v
+                    </div>
+                    <ul class="questions">
+                        <li>Resolver con Euler y RK4</li>
+                        <li>Graficar x(t) y v(t) vs tiempo</li>
+                        <li>Crear retrato de fase (v vs x)</li>
+                        <li>Verificar conservación de energía (si aplica)</li>
+                        <li>Comparar con solución analítica</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Oscilador</span>
+                        <span class="tag">Retrato de Fase</span>
+                        <span class="tag">Sistema 2x2</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="medium">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 4.2</span>
+                    <span class="difficulty medium">Medio</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Modelo Lotka-Volterra (Predador-Presa)</strong></p>
+                    <div class="parameters">
+                        x' = ax - bxy (presas)<br>
+                        y' = -cy + dxy (predadores)<br>
+                        Parámetros: a=1, b=0.1, c=1.5, d=0.075<br>
+                        Condiciones iniciales: probar (10,5), (40,9), (15,15)
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar el sistema con solve_ivp</li>
+                        <li>Graficar evolución temporal de ambas poblaciones</li>
+                        <li>Crear retrato de fase mostrando ciclos</li>
+                        <li>Encontrar punto de equilibrio no trivial</li>
+                        <li>Estudiar período de oscilaciones</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Lotka-Volterra</span>
+                        <span class="tag">Modelado</span>
+                        <span class="tag">Ciclos</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="hard">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 4.3</span>
+                    <span class="difficulty hard">Difícil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Sistema de Lorenz</strong></p>
+                    <div class="parameters">
+                        x' = σ(y - x)<br>
+                        y' = x(ρ - z) - y<br>
+                        z' = xy - βz<br>
+                        Parámetros: σ=10, β=8/3, ρ=28 (caótico)
+                    </div>
+                    <ul class="questions">
+                        <li>Resolver para t ∈ [0, 50]</li>
+                        <li>Graficar trayectoria 3D (atractor de Lorenz)</li>
+                        <li>Estudiar sensibilidad a condiciones iniciales</li>
+                        <li>Comparar con ρ=20 (no caótico)</li>
+                        <li>Calcular exponentes de Lyapunov (opcional)</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Lorenz</span>
+                        <span class="tag">Caos</span>
+                        <span class="tag">3D</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="medium">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 4.4</span>
+                    <span class="difficulty medium">Medio</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Péndulo no lineal</strong></p>
+                    <div class="parameters">
+                        θ'' + (g/L)sin(θ) + γθ' = 0<br>
+                        Convertir a sistema: θ' = ω, ω' = -(g/L)sin(θ) - γω<br>
+                        g/L = 1, γ = 0.1 (amortiguamiento)
+                    </div>
+                    <ul class="questions">
+                        <li>Resolver para diferentes amplitudes iniciales</li>
+                        <li>Comparar con aproximación lineal (sin(θ) ≈ θ)</li>
+                        <li>Crear retratos de fase para diferentes energías</li>
+                        <li>Identificar separatriz (órbita que separa comportamientos)</li>
+                        <li>Estudiar período vs amplitud</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Péndulo</span>
+                        <span class="tag">No Lineal</span>
+                        <span class="tag">Separatriz</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SECCIÓN 5: ECUACIONES EN DERIVADAS PARCIALES -->
+        <section id="edp" class="topic-section">
+            <div class="topic-header">
+                <span class="topic-icon">🌊</span>
+                <h2 class="topic-title">Ecuaciones en Derivadas Parciales</h2>
+                <span class="exercise-count">6 ejercicios</span>
+            </div>
+            
+            <div class="exercise" data-difficulty="easy">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 5.1</span>
+                    <span class="difficulty easy">Fácil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Problema de valores en la frontera 1D</strong></p>
+                    <div class="parameters">
+                        Variante A: -u'' = 1 en [0,1], u(0)=0, u(1)=0<br>
+                        Variante B: -u'' + u = x en [0,1], u(0)=1, u(1)=2<br>
+                        Variante C: -u'' + 4u = sin(πx) en [0,1], u(0)=0, u(1)=0
+                    </div>
+                    <ul class="questions">
+                        <li>Discretizar con diferencias finitas (N=20 puntos)</li>
+                        <li>Armar sistema tridiagonal</li>
+                        <li>Resolver y graficar solución</li>
+                        <li>Comparar con solución analítica (si existe)</li>
+                        <li>Estudiar error vs N</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Diferencias Finitas</span>
+                        <span class="tag">BVP</span>
+                        <span class="tag">Tridiagonal</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="medium">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 5.2</span>
+                    <span class="difficulty medium">Medio</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Ecuación de calor 1D</strong></p>
+                    <div class="parameters">
+                        ∂u/∂t = α ∂²u/∂x² en [0,1]×[0,T]<br>
+                        Condiciones: u(0,t) = u(1,t) = 0<br>
+                        Inicial: u(x,0) = sin(πx) o 4x(1-x)<br>
+                        α = 0.1 (difusividad)
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar esquema explícito (FTCS)</li>
+                        <li>Verificar condición de estabilidad: Δt ≤ Δx²/(2α)</li>
+                        <li>Graficar evolución temporal (snapshots)</li>
+                        <li>Crear animación de la difusión</li>
+                        <li>Comparar con esquema implícito</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Ecuación de Calor</span>
+                        <span class="tag">FTCS</span>
+                        <span class="tag">Estabilidad</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="hard">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 5.3</span>
+                    <span class="difficulty hard">Difícil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Ecuación de Poisson 2D</strong></p>
+                    <div class="parameters">
+                        ∇²u = f(x,y) en [0,1]×[0,1]<br>
+                        u = 0 en la frontera<br>
+                        Variante A: f = -2π²sin(πx)sin(πy)<br>
+                        Variante B: f = -8 (constante)<br>
+                        Variante C: f = exp(-((x-0.5)² + (y-0.5)²)/0.1)
+                    </div>
+                    <ul class="questions">
+                        <li>Discretizar con diferencias finitas 2D</li>
+                        <li>Formar sistema lineal (grande y sparse)</li>
+                        <li>Resolver con método iterativo (Gauss-Seidel o SOR)</li>
+                        <li>Visualizar solución con contour plot</li>
+                        <li>Estudiar convergencia del método iterativo</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Poisson 2D</span>
+                        <span class="tag">Sparse</span>
+                        <span class="tag">Visualización</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="medium">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 5.4</span>
+                    <span class="difficulty medium">Medio</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Problema con condiciones mixtas</strong></p>
+                    <div class="parameters">
+                        -u'' + β(x)u = f(x) en [0,2]<br>
+                        u(0) = 1 (Dirichlet)<br>
+                        u'(2) = 0 (Neumann)<br>
+                        β(x) = 1 + x², f(x) = x
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar diferencias finitas con condición Neumann</li>
+                        <li>Usar ghost point o diferencias hacia atrás en x=2</li>
+                        <li>Resolver sistema resultante</li>
+                        <li>Verificar que u'(2) ≈ 0</li>
+                        <li>Comparar ambos enfoques para Neumann</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Condiciones Mixtas</span>
+                        <span class="tag">Neumann</span>
+                        <span class="tag">Ghost Point</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SECCIÓN 6: NORMAS Y MÉTODOS ESPECIALES -->
+        <section id="normas" class="topic-section">
+            <div class="topic-header">
+                <span class="topic-icon">📏</span>
+                <h2 class="topic-title">Normas y Métodos Especiales</h2>
+                <span class="exercise-count">5 ejercicios</span>
+            </div>
+            
+            <div class="exercise" data-difficulty="easy">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 6.1</span>
+                    <span class="difficulty easy">Fácil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Cálculo de normas matriciales</strong></p>
+                    <div class="parameters">
+                        Variante A: A = [[1,2,3], [4,5,6], [7,8,9]]<br>
+                        Variante B: A = [[4,-2,0], [-2,4,-2], [0,-2,4]]<br>
+                        Variante C: A matriz aleatoria 5x5
+                    </div>
+                    <ul class="questions">
+                        <li>Calcular ||A||₁, ||A||₂, ||A||∞, ||A||_F</li>
+                        <li>Verificar fórmulas: ||A||₁ = max suma columnas</li>
+                        <li>Comparar con np.linalg.norm()</li>
+                        <li>Calcular número de condición κ(A) = ||A||·||A⁻¹||</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Normas</span>
+                        <span class="tag">Número de Condición</span>
+                        <span class="tag">Comparación</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="medium">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 6.2</span>
+                    <span class="difficulty medium">Medio</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Estimación iterativa de norma-2</strong></p>
+                    <div class="parameters">
+                        Matrices de prueba:<br>
+                        - Simétrica 5x5<br>
+                        - No simétrica 6x6<br>
+                        - Matriz sparse 20x20
+                    </div>
+                    <ul class="questions">
+                        <li>Implementar algoritmo de estimación con vectores aleatorios</li>
+                        <li>Estudiar convergencia con 200 iteraciones</li>
+                        <li>Analizar varianza de las estimaciones</li>
+                        <li>Comparar con método de la potencia</li>
+                        <li>Estudiar efecto de la distribución inicial</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">Estimación</span>
+                        <span class="tag">Método Potencia</span>
+                        <span class="tag">Convergencia</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exercise" data-difficulty="hard">
+                <div class="exercise-header">
+                    <span class="exercise-number">Ejercicio 6.3</span>
+                    <span class="difficulty hard">Difícil</span>
+                </div>
+                <div class="exercise-content">
+                    <p><strong>Descomposición SVD y aplicaciones</strong></p>
+                    <div class="parameters">
+                        Crear matriz de imagen 100x100 o usar matriz de datos
+                    </div>
+                    <ul class="questions">
+                        <li>Calcular descomposición SVD: A = UΣV^T</li>
+                        <li>Implementar compresión usando k valores singulares</li>
+                        <li>Graficar error vs k</li>
+                        <li>Calcular rango numérico con tolerancia</li>
+                        <li>Resolver mínimos cuadrados usando SVD</li>
+                        <li>Analizar número de condición efectivo</li>
+                    </ul>
+                    <div class="tags">
+                        <span class="tag">SVD</span>
+                        <span class="tag">Compresión</span>
+                        <span class="tag">Mínimos Cuadrados</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>📚 Banco de Ejercicios - Cálculo Numérico</p>
+            <p>FCEyN - UBA | 2024</p>
+            <p><em>Practica variando los parámetros y combinando diferentes preguntas</em></p>
+        </footer>
+    </div>
+    
+    <script>
+        function filterExercises(difficulty) {
+            const exercises = document.querySelectorAll('.exercise');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            exercises.forEach(exercise => {
+                if (difficulty === 'all' || exercise.dataset.difficulty === difficulty) {
+                    exercise.style.display = 'block';
+                } else {
+                    exercise.style.display = 'none';
+                }
+            });
+            
+            // Update exercise counts
+            document.querySelectorAll('.topic-section').forEach(section => {
+                const visibleExercises = section.querySelectorAll('.exercise:not([style*="display: none"])').length;
+                const counter = section.querySelector('.exercise-count');
+                counter.textContent = `${visibleExercises} ejercicios`;
+            });
+        }
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        
+        // Add copy functionality for code blocks
+        document.querySelectorAll('.parameters').forEach(block => {
+            block.style.cursor = 'pointer';
+            block.title = 'Click para copiar';
+            block.addEventListener('click', function() {
+                const text = this.innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    const original = this.style.background;
+                    this.style.background = '#d4edda';
+                    setTimeout(() => this.style.background = original, 300);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
